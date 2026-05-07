@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: spring-order-confirmation
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+app:
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY:sk_test_placeholder}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_placeholder}
+  mailtrap:
+    api-token: ${MAILTRAP_API_TOKEN:mailtrap_token_placeholder}
+    template-uuid: ${MAILTRAP_TEMPLATE_UUID:template_uuid_placeholder}
+    from-email: ${MAIL_FROM_ADDRESS:orders@example.com}
+    from-name: ${MAIL_FROM_NAME:Order Confirmation}
+    fallback-recipient: ${MAIL_ORDER_RECIPIENT:}
+    sandbox: ${MAILTRAP_SANDBOX:false}
+    inbox-id: ${MAILTRAP_INBOX_ID:}
