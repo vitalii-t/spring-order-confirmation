@@ -28,7 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {
+        "app.stripe.secret-key=sk_test_123",
         "app.stripe.webhook-secret=whsec_test_secret",
+        "app.mailtrap.api-token=test_mailtrap_token",
+        "app.mailtrap.template-uuid=test_template_uuid",
+        "app.mailtrap.from-email=orders@example.com",
         "app.mailtrap.fallback-recipient=fallback@example.com"
 })
 @AutoConfigureMockMvc

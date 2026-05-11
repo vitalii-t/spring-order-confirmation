@@ -38,34 +38,79 @@ The handler is payload-first. If the webhook payload does not include `line_item
 
 ## Configuration
 
-Set these environment variables before running the app:
+Set these environment variables before running the app.
+
+Required:
+
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `MAILTRAP_API_TOKEN`
+- `MAILTRAP_TEMPLATE_UUID`
+- `MAIL_FROM_ADDRESS`
+
+Optional:
+
+- `MAIL_FROM_NAME` default: `Order Confirmation`
+- `MAIL_ORDER_RECIPIENT` used only when Stripe does not include a customer email
+- `MAILTRAP_SANDBOX` default: `false`
+- `MAILTRAP_INBOX_ID` required only when `MAILTRAP_SANDBOX=true`
+- `SERVER_PORT` default: `8080`
+
+Windows PowerShell:
 
 ```powershell
 $env:STRIPE_SECRET_KEY="sk_test_..."
 $env:STRIPE_WEBHOOK_SECRET="whsec_..."
 $env:MAILTRAP_API_TOKEN="..."
 $env:MAILTRAP_TEMPLATE_UUID="..."
-$env:MAIL_FROM_ADDRESS="[email protected]"
+$env:MAIL_FROM_ADDRESS="orders@example.com"
 $env:MAIL_FROM_NAME="Order Confirmation"
-$env:MAIL_ORDER_RECIPIENT="[email protected]"
+$env:MAIL_ORDER_RECIPIENT="fallback@example.com"
+$env:MAILTRAP_SANDBOX="false"
+$env:SERVER_PORT="8080"
 ```
 
-`MAIL_ORDER_RECIPIENT` is optional. It is only used as a fallback when Stripe does not include a customer email in the session.
-`MAILTRAP_SANDBOX` is optional, by default it is set to false. It is only needed if you want to use Sandbox API.
-`MAILTRAP_INBOX_ID` is required when `MAILTRAP_SANDBOX` is true.
+macOS/Linux:
+
+```bash
+export STRIPE_SECRET_KEY="sk_test_..."
+export STRIPE_WEBHOOK_SECRET="whsec_..."
+export MAILTRAP_API_TOKEN="..."
+export MAILTRAP_TEMPLATE_UUID="..."
+export MAIL_FROM_ADDRESS="orders@example.com"
+export MAIL_FROM_NAME="Order Confirmation"
+export MAIL_ORDER_RECIPIENT="fallback@example.com"
+export MAILTRAP_SANDBOX="false"
+export SERVER_PORT="8080"
+```
+
+If you use Mailtrap Sandbox API, also set:
+
+```text
+MAILTRAP_SANDBOX=true
+MAILTRAP_INBOX_ID=0
+```
 
 ## Run Locally
+
+Windows PowerShell:
 
 ```powershell
 .\gradlew.bat bootRun
 ```
 
-The app starts on `http://localhost:8080`.
+macOS/Linux:
+
+```bash
+./gradlew bootRun
+```
+
+The app starts on `http://localhost:<SERVER_PORT>`. If `SERVER_PORT` is not set, it uses `8080`.
 
 Webhook endpoint:
 
 ```text
-POST http://localhost:8080/api/stripe/webhook
+POST http://localhost:<SERVER_PORT>/api/stripe/webhook
 ```
 
 ## Stripe Test Mode Setup
@@ -103,8 +148,17 @@ stripe login
 
 ### 3. Forward webhooks locally
 
+Windows PowerShell:
+
+```powershell
+$port = if ($env:SERVER_PORT) { $env:SERVER_PORT } else { 8080 }
+stripe listen --forward-to "localhost:$port/api/stripe/webhook"
+```
+
+macOS/Linux:
+
 ```bash
-stripe listen --forward-to localhost:8080/api/stripe/webhook
+stripe listen --forward-to localhost:${SERVER_PORT:-8080}/api/stripe/webhook
 ```
 
 Stripe CLI prints a signing secret like `whsec_...`. Copy that value into `STRIPE_WEBHOOK_SECRET`.
@@ -170,8 +224,16 @@ Example `shipping_address`:
 
 ## Test
 
+Windows PowerShell:
+
 ```powershell
 .\gradlew.bat test
+```
+
+macOS/Linux:
+
+```bash
+./gradlew test
 ```
 
 ## Project Structure

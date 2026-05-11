@@ -15,4 +15,9 @@ public record MailtrapProperties(
         boolean sandbox,
         Long inboxId
 ) {
+    public MailtrapProperties {
+        if (sandbox && inboxId == null) {
+            throw new IllegalArgumentException("MAILTRAP_INBOX_ID is required when MAILTRAP_SANDBOX is true");
+        }
+    }
 }
